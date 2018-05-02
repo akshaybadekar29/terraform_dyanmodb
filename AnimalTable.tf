@@ -20,6 +20,10 @@ resource "aws_dynamodb_table" "us-east-1" {
   stream_view_type = "NEW_AND_OLD_IMAGES"
   read_capacity    = 5
   write_capacity   = 5
+  server_side_encryption {
+  enabled = true
+
+  }
 
   attribute {
     name = "AnimalType"
@@ -63,7 +67,9 @@ resource "aws_dynamodb_table" "us-west-2" {
   stream_view_type = "NEW_AND_OLD_IMAGES"
   read_capacity    = 5
   write_capacity   = 5
-
+  server_side_encryption {
+  enabled = true
+  }
   attribute {
     name = "AnimalType"
     type = "S"
