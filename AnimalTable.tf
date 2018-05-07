@@ -1,14 +1,19 @@
 provider "aws" {
   alias  = "us-east-1"
   region = "us-east-1"
+  version = "~> 1.17"
+
 }
 
 provider "aws" {
   alias  = "us-west-2"
   region = "us-west-2"
+  version = "~> 1.17"
+
 }
 
 
+#### create table Animal in us-east-1 region 
 
 resource "aws_dynamodb_table" "us-east-1" {
   provider = "aws.us-east-1"
@@ -16,14 +21,18 @@ resource "aws_dynamodb_table" "us-east-1" {
   hash_key         = "AnimalType"
   range_key        = "AnimalName"  
   name             = "Animal"
-  stream_enabled   = true
+  server_side_encryption = true                   
+  stream_enabled   = true                                       #Stream Enable
   stream_view_type = "NEW_AND_OLD_IMAGES"
   read_capacity    = 5
   write_capacity   = 5
-  server_side_encryption {
+  server_side_encryption {                                      #Enable server side encryption 
   enabled = true
-
   }
+  point_in_time_recovery {
+   enabled = true
+  }
+
 
   attribute {
     name = "AnimalType"
@@ -43,8 +52,8 @@ resource "aws_dynamodb_table" "us-east-1" {
   }
 
 
-    global_secondary_index {
-    name               = "OwnerIndec"
+    global_secondary_index {             
+    name               = "OwnerIndec"                            #Gloabl secondary index 
     hash_key           = "Owner"
     range_key          = "Breed"
     write_capacity     = 5
@@ -57,12 +66,15 @@ resource "aws_dynamodb_table" "us-east-1" {
 
 }
 
+#### create table Animal in us-west-2 region   
+
 resource "aws_dynamodb_table" "us-west-2" {
   provider = "aws.us-west-2"
 
   hash_key         = "AnimalType"
   range_key        = "AnimalName"  
   name             = "Animal"
+  SSEEnabled       = true
   stream_enabled   = true
   stream_view_type = "NEW_AND_OLD_IMAGES"
   read_capacity    = 5
@@ -70,6 +82,10 @@ resource "aws_dynamodb_table" "us-west-2" {
   server_side_encryption {
   enabled = true
   }
+  point_in_time_recovery {
+   enabled = true
+  }
+
   attribute {
     name = "AnimalType"
     type = "S"
