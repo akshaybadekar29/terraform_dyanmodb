@@ -544,7 +544,7 @@ resource "aws_appautoscaling_target" "Animal_us-west-2_index_read_target" {
 
 }
 
-resource "aws.appautoscaling_policy" "Animal_us-west-2_index_read_policy" {
+resource "aws_appautoscaling_policy" "Animal_us-west-2_index_read_policy" {
   provider = "aws.us-west-2"
   name               = "DynamoDBReadCapacityUtilization:${aws_appautoscaling_target.Animal_us-west-2_table_read_target.resource_id}"
   policy_type        = "TargetTrackingScaling"
