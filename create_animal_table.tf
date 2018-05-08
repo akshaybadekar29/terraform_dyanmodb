@@ -362,9 +362,9 @@ resource "aws_dynamodb_table" "us-west-2" {
 
 resource "aws_sns_topic" "user_updates_us-west-2_Animal" {             #SNS Topic creation 
   provider = "aws.us-west-2"
-  name = "Animal.us-west-2_Alram"
+  name = "Animal_us-west-2_Alram"
 }
-####Alram creation for animal table .us-west-2 region 
+####Alram creation for animal table us-west-2 region 
 
 resource "aws_cloudwatch_metric_alarm" "us-west-2_animal_read_capacity" {        
   provider = "aws.us-west-2"
@@ -385,6 +385,7 @@ resource "aws_cloudwatch_metric_alarm" "us-west-2_animal_read_capacity" {
 
 
 resource "aws_cloudwatch_metric_alarm" "us-west-2_animal_write_capacity" {
+  provider = "aws.us-west-2"
   alarm_name                = "ConsumedWriteCapacityUnits.us-west-2_animal"
   comparison_operator       = "GreaterThanThreshold"
   evaluation_periods        = "1"
