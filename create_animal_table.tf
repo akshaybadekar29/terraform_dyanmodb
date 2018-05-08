@@ -360,7 +360,7 @@ resource "aws_dynamodb_table" "us-west-2" {
 ####Alram creation for animal table  us-west-2 region 
 
 
-resource "aws_sns_topic" "user_updates.us-west-2_Animal" {             #SNS Topic creation 
+resource "aws_sns_topic" "user_updates_us-west-2_Animal" {             #SNS Topic creation 
   provider = "aws.us-west-2"
   name = "Animal.us-west-2_Alram"
 }
@@ -380,7 +380,7 @@ resource "aws_cloudwatch_metric_alarm" "us-west-2_animal_read_capacity" {
   dimensions {
                TableName="${aws_dynamodb_table.us-west-2.name}"
               }
-  alarm_actions = ["${aws_sns_topic.user_updates.us-west-2_Animal.arn}"]
+  alarm_actions = ["${aws_sns_topic.user_updates_us-west-2_Animal.arn}"]
 }
 
 
@@ -397,7 +397,7 @@ resource "aws_cloudwatch_metric_alarm" "us-west-2_animal_write_capacity" {
   dimensions {
                TableName="${aws_dynamodb_table.us-west-2.name}"
               }
-  alarm_actions = ["${aws_sns_topic.user_updates.us-west-2_Animal.arn}"]
+  alarm_actions = ["${aws_sns_topic.user_updates_us-west-2_Animal.arn}"]
 }
 
 resource "aws_cloudwatch_metric_alarm" "us-west-2_animal_request_throteld_read" {
@@ -415,7 +415,7 @@ resource "aws_cloudwatch_metric_alarm" "us-west-2_animal_request_throteld_read" 
   dimensions {
                TableName="${aws_dynamodb_table.us-west-2.name}"
               }
-  alarm_actions = ["${aws_sns_topic.user_updates.us-west-2_Animal.arn}"]
+  alarm_actions = ["${aws_sns_topic.user_updates_us-west-2_Animal.arn}"]
 }
 
 
@@ -434,7 +434,7 @@ resource "aws_cloudwatch_metric_alarm" "us-west-2_animal_request_throteld_write"
   dimensions {
                TableName="${aws_dynamodb_table.us-west-2.name}"
               }
-  alarm_actions = ["${aws_sns_topic.user_updates.us-west-2_Animal.arn}"]
+  alarm_actions = ["${aws_sns_topic.user_updates_us-west-2_Animal.arn}"]
 }
 
 resource "aws_cloudwatch_metric_alarm" "us-west-2_animal_Check_Failed_Requests" {
@@ -452,7 +452,7 @@ resource "aws_cloudwatch_metric_alarm" "us-west-2_animal_Check_Failed_Requests" 
   dimensions {
                TableName="${aws_dynamodb_table.us-west-2.name}"
               }
-  alarm_actions = ["${aws_sns_topic.user_updates.us-west-2_Animal.arn}"]
+  alarm_actions = ["${aws_sns_topic.user_updates_us-west-2_Animal.arn}"]
 }
 
 resource "aws_cloudwatch_metric_alarm" "us-west-2_system_errors" {
@@ -470,7 +470,7 @@ resource "aws_cloudwatch_metric_alarm" "us-west-2_system_errors" {
   dimensions {
                TableName="${aws_dynamodb_table.us-west-2.name}"
               }
-  alarm_actions = ["${aws_sns_topic.user_updates.us-west-2_Animal.arn}"]
+  alarm_actions = ["${aws_sns_topic.user_updates_us-west-2_Animal.arn}"]
 }
 
 #AutoScalling and Scalling policy for Animal table in us-west-2 region 
