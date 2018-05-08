@@ -25,11 +25,11 @@ resource "aws_dynamodb_table" "us-east-1" {
   read_capacity    = 5
   write_capacity   = 5
 
-  server_side_encryption {
+  server_side_encryption {                                         #Enable serverside encryption 
    enabled = true
 
    }
-    point_in_time_recovery {
+    point_in_time_recovery {                                       #Enable Point in time recovery 
    enabled = true
 
    }
@@ -50,7 +50,7 @@ resource "aws_dynamodb_table" "us-east-1" {
     type = "S"
   }
 
-    global_secondary_index {
+    global_secondary_index {                                          #Gloabl Sencodary index 
     name               = "OwnerIndec"
     hash_key           = "Owner"
     range_key          = "Breed"
@@ -63,11 +63,15 @@ resource "aws_dynamodb_table" "us-east-1" {
     }
 
 }
-resource "aws_sns_topic" "user_updates_us-east-1_Animal" {
+
+
+resource "aws_sns_topic" "user_updates_us-east-1_Animal" {             #SNS Topic creation 
+  provider = "aws.us-east-1"
   name = "Animal_us-east-1_Alram"
 }
+####Alram creation for animal table  us-east-1 region 
 
-resource "aws_cloudwatch_metric_alarm" "us-east-1_animal_read_capacity" {
+resource "aws_cloudwatch_metric_alarm" "us-east-1_animal_read_capacity" {        
   provider = "aws.us-east-1"
   alarm_name                = "ReadCapacityUnitsLimitAlarm_us-east-1_animal"
   comparison_operator       = "GreaterThanThreshold"
@@ -181,118 +185,7 @@ resource "aws_cloudwatch_metric_alarm" "us-east-1_system_errors" {
 }
 
 
-resource "aws_cloudwatch_metric_alarm" "us-east-1_user_errors" {
-  provider = "aws.us-east-1"
-  alarm_name                = "User_errors_us-east-1_animal"
-  comparison_operator       = "GreaterThanThreshold"
-  evaluation_periods        = "1"
-  metric_name               = "UserErrors"
-  namespace                 = "AWS/DynamoDB"
-  period                    = "60"
-  statistic                 = "Sum"
-  threshold                 = "0"
-  unit                      = "Count"
-  alarm_description         =  "Alarm when my requests request are faild due to user errors"
-  dimensions {
-               TableName="${aws_dynamodb_table.us-east-1.name}"
-              }
-  alarm_actions = ["${aws_sns_topic.user_updates_us-east-1_Animal.arn}"]
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-###################### Animal Table in  us-west-2 region ############
-
-resource "aws_dynamodb_table" "us-west-2" {
-  provider = "aws.us-west-2"
-
-  hash_key         = "AnimalType"
-  range_key        = "AnimalName"  
-  name             = "Animal"
-  stream_enabled   = true
-  stream_view_type = "NEW_AND_OLD_IMAGES"
-  read_capacity    = 5
-  write_capacity   = 5
-  
-  server_side_encryption {
-  enabled = true
-
-  }
-    point_in_time_recovery {
-   enabled = true
-
-   }
-
-  attribute {
-    name = "AnimalType"
-    type = "S"
-  }
-    attribute {
-    name = "AnimalName"
-    type = "S"
-  }
-  attribute {
-    name = "Owner"
-    type = "S"
-  }
-  attribute {
-    name = "Breed"
-    type = "S"
-  }
-  
-    global_secondary_index {
-    name               = "OwnerIndec"
-    hash_key           = "Owner"
-    range_key          = "Breed"
-    write_capacity     = 5
-    read_capacity      = 5
-    projection_type    = "ALL"
-  }
-
-  lifecycle {
-        ignore_changes = ["read_capacity", "write_capacity"]
-    }
-
-}
-
-
-
-resource "aws_dynamodb_global_table" "Animal" {
-  depends_on = ["aws_dynamodb_table.us-east-1", "aws_dynamodb_table.us-west-2"]
-  provider   = "aws.us-east-1"
- 
-
-  name = "Animal"
-
-  replica {
-    region_name = "us-east-1"
-  }
-
-  replica {
-    region_name = "us-west-2"
-  }
-
-
-}
-
+#AutoScalling and Scalling policy for Animal table in us-east-1 region 
 
 resource "aws_appautoscaling_target" "Animal_us-east-1_table_read_target" {
   provider = "aws.us-east-1"
@@ -407,7 +300,180 @@ resource "aws_appautoscaling_policy" "Animal_us-east-1_index_write_target" {
 }
 
 
-####################
+
+
+###################### Animal Table in  us-west-2 region ############
+
+resource "aws_dynamodb_table" "us-west-2" {
+  provider = "aws.us-west-2"
+
+  hash_key         = "AnimalType"
+  range_key        = "AnimalName"  
+  name             = "Animal"
+  stream_enabled   = true
+  stream_view_type = "NEW_AND_OLD_IMAGES"
+  read_capacity    = 5
+  write_capacity   = 5
+  
+  server_side_encryption {
+  enabled = true
+
+  }
+    point_in_time_recovery {
+   enabled = true
+
+   }
+
+  attribute {
+    name = "AnimalType"
+    type = "S"
+  }
+    attribute {
+    name = "AnimalName"
+    type = "S"
+  }
+  attribute {
+    name = "Owner"
+    type = "S"
+  }
+  attribute {
+    name = "Breed"
+    type = "S"
+  }
+  
+    global_secondary_index {
+    name               = "OwnerIndec"
+    hash_key           = "Owner"
+    range_key          = "Breed"
+    write_capacity     = 5
+    read_capacity      = 5
+    projection_type    = "ALL"
+  }
+
+  lifecycle {
+        ignore_changes = ["read_capacity", "write_capacity"]
+    }
+
+}
+
+
+####Alram creation for animal table  us-west-2 region 
+
+
+resource "aws_sns_topic" "user_updates.us-west-2_Animal" {             #SNS Topic creation 
+  provider = "aw.us-west-2"
+  name = "Animal.us-west-2_Alram"
+}
+####Alram creation for animal table .us-west-2 region 
+
+resource "aws_cloudwatch_metric_alarm" .us-west-2_animal_read_capacity" {        
+  provider = "aw.us-west-2"
+  alarm_name                = "ReadCapacityUnitsLimitAlarm.us-west-2_animal"
+  comparison_operator       = "GreaterThanThreshold"
+  evaluation_periods        = "1"
+  metric_name               = "ConsumedReadCapacityUnits"
+  namespace                 = "AWS/DynamoDB"
+  period                    = "60"
+  statistic                 = "Sum"
+  threshold                 = "240"
+  alarm_description         = "Alarm when read capacity reaches 80% of my provisioned read capacity"
+  dimensions {
+               TableName="${aws_dynamodb_table.us-west-2.name}"
+              }
+  alarm_actions = ["${aws_sns_topic.user_updates.us-west-2_Animal.arn}"]
+}
+
+
+resource "aws_cloudwatch_metric_alarm" .us-west-2_animal_write_capacity" {
+  alarm_name                = "ConsumedWriteCapacityUnits.us-west-2_animal"
+  comparison_operator       = "GreaterThanThreshold"
+  evaluation_periods        = "1"
+  metric_name               = "ConsumedWriteCapacityUnits"
+  namespace                 = "AWS/DynamoDB"
+  period                    = "60"
+  statistic                 = "Sum"
+  threshold                 = "60"
+  alarm_description         = "Alarm when write capacity reaches 80% of my provisioned read capacity"
+  dimensions {
+               TableName="${aws_dynamodb_tabl.us-west-2.name}"
+              }
+  alarm_actions = ["${aws_sns_topic.user_updates.us-west-2_Animal.arn}"]
+}
+
+resource "aws_cloudwatch_metric_alarm" .us-west-2_animal_request_throteld_read" {
+  provider = "aw.us-west-2"
+  alarm_name                = "Throttledi_Read_Requests.us-west-2_animal"
+  comparison_operator       = "GreaterThanThreshold"
+  evaluation_periods        = "1"
+  metric_name               = "ReadThrottleEvents"
+  namespace                 = "AWS/DynamoDB"
+  period                    = "300"
+  statistic                 = "Sum"
+  threshold                 = "0"
+  unit                      = "Count"
+  alarm_description         =  "Alarm when my  read requests are exceeding provisioned throughput limits of a table"
+  dimensions {
+               TableName="${aws_dynamodb_table.us-west-2.name}"
+              }
+  alarm_actions = ["${aws_sns_topic.user_updates.us-west-2_Animal.arn}"]
+}
+
+
+resource "aws_cloudwatch_metric_alarm" .us-west-2_animal_request_throteld_write" {
+  provider = "aw.us-west-2"
+  alarm_name                = "Throttled_Write_Requests.us-west-2_animal"
+  comparison_operator       = "GreaterThanThreshold"
+  evaluation_periods        = "1"
+  metric_name               = "WriteThrottleEvents"
+  namespace                 = "AWS/DynamoDB"
+  period                    = "300"
+  statistic                 = "Sum"
+  threshold                 = "0"
+  unit                      = "Count"
+  alarm_description         =  "Alarm when my  write requests are exceeding provisioned throughput limits of a table"
+  dimensions {
+               TableName="${aws_dynamodb_table.us-west-2.name}"
+              }
+  alarm_actions = ["${aws_sns_topic.user_updates.us-west-2_Animal.arn}"]
+}
+
+resource "aws_cloudwatch_metric_alarm" .us-west-2_animal_Check_Failed_Requests" {
+  provider = "aw.us-west-2"
+  alarm_name                = "Conditiaonal.us-west-2_animal"
+  comparison_operator       = "GreaterThanThreshold"
+  evaluation_periods        = "1"
+  metric_name               = "ConditionalCheckFailedRequests"
+  namespace                 = "AWS/DynamoDB"
+  period                    = "60"
+  statistic                 = "Sum"
+  threshold                 = "0"
+  unit                      = "Count"
+  alarm_description         =  "Alarm when my requests request are faild due to conditional check"
+  dimensions {
+               TableName="${aws_dynamodb_table.us-west-2.name}"
+              }
+  alarm_actions = ["${aws_sns_topic.user_updates.us-west-2_Animal.arn}"]
+}
+
+resource "aws_cloudwatch_metric_alarm" .us-west-2_system_errors" {
+  provider = "aw.us-west-2"
+  alarm_name                = "System_errors.us-west-2_animal"
+  comparison_operator       = "GreaterThanThreshold"
+  evaluation_periods        = "1"
+  metric_name               = "SystemErrors"
+  namespace                 = "AWS/DynamoDB"
+  period                    = "60"
+  statistic                 = "Sum"
+  threshold                 = "0"
+  unit                      = "Count"
+  alarm_description         =  "Alarm when my requests request are faild due to system errors"
+  dimensions {
+               TableName="${aws_dynamodb_table.us-west-2.name}"
+              }
+  alarm_actions = ["${aws_sns_topic.user_updates.us-west-2_Animal.arn}"]
+}
+
+#AutoScalling and Scalling policy for Animal table in us-west-2 region 
 
 resource "aws_appautoscaling_target" "Animal_us-west-2_table_read_target" {
   provider = "aws.us-west-2"
@@ -524,4 +590,28 @@ resource "aws_appautoscaling_policy" "Animal_us-west-2_index_write_target" {
     target_value = 70
   }
 }
+
+
+
+#Global Table creation 
+
+resource "aws_dynamodb_global_table" "Animal" {
+  depends_on = ["aws_dynamodb_table.us-east-1", "aws_dynamodb_table.us-west-2"]
+  provider   = "aws.us-east-1"
+ 
+
+  name = "Animal"
+
+  replica {
+    region_name = "us-east-1"
+  }
+
+  replica {
+    region_name = "us-west-2"
+  }
+
+
+}
+
+
 
